@@ -1,0 +1,54 @@
+model_list:
+  # Tier 1: The Heavyweight Agents (Frontier Free Tiers)
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: claude-sonnet
+    litellm_params:
+      model: github/claude-3-5-sonnet
+      api_key: os.environ/GITHUB_TOKEN
+  - model_name: gpt-4o
+    litellm_params:
+      model: github/gpt-4o
+      api_key: os.environ/GITHUB_TOKEN
+  - model_name: llama-405b
+    litellm_params:
+      model: github/meta-llama-3.1-405b-instruct
+      api_key: os.environ/GITHUB_TOKEN
+
+  # Tier 2: Managed OSS (High Performance)
+  - model_name: groq-llama-70b
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+  - model_name: nvidia-deepseek
+    litellm_params:
+      model: nvidia_nim/deepseek-ai/deepseek-v3
+      api_key: os.environ/NVIDIA_NIM_API_KEY
+
+  # Tier 3: Aggregator Free Models
+  - model_name: openrouter-llama
+    litellm_params:
+      model: openrouter/meta-llama/llama-3.1-8b-instruct:free
+      api_key: os.environ/OPENROUTER_API_KEY
+  - model_name: openrouter-qwen
+    litellm_params:
+      model: openrouter/qwen/qwen-3.5-72b:free
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  # Tier 4: Fast/High-Volume Fallback
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  # Tier 5: Local CPU Survival
+  - model_name: local-cpu-survival
+    litellm_params:
+      model: ollama/llama3.2:1b
+      api_base: http://localhost:11434
+
+router_settings:
+  # When the primary model (gemini-pro) hits a rate limit (429), it cascades down this list.
+  fallbacks: [{"gemini-pro": ["claude-sonnet", "gpt-4o", "llama-405b", "groq-llama-70b", "nvidia-deepseek", "gemini-flash", "openrouter-qwen", "openrouter-llama", "local-cpu-survival"]}]
