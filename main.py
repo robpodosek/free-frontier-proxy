@@ -13,12 +13,33 @@ def main():
     env_file = project_root / ".env"
     
     print("\n--- LiteLLM Proxy Wrapper ---")
-    if not env_file.exists():
-        print(f"WARNING: No .env file found at {env_file}")
-        print("Please copy .env.example to .env and fill in your API keys.")
-        print("Continuing with system environment variables...\n")
-    else:
-        print(f"SUCCESS: Found .env file at {env_file}\n")
+    
+    # Load .env file if it exists so we can verify the keys
+    try:
+        from dotenv import load_dotenv
+        if env_file.exists():
+            load_dotenv(env_file)
+            print(f"Loaded environment from {env_file}")
+    except ImportError:
+        pass # python-dotenv not available, rely on system env
+
+    # Verify keys from config.yaml
+    config_file = project_root / "config.yaml"
+    if config_file.exists():
+        import re
+        content = config_file.read_text()
+        # Find all patterns like os.environ/KEY_NAME
+        required_vars = set(re.findall(r'os\.environ/([A-Z0-9_]+)', content))
+        
+        missing_vars = [var for var in required_vars if not os.environ.get(var)]
+        
+        if missing_vars:
+            print("WARNING: The following environment variables are missing:")
+            for var in sorted(missing_vars):
+                print(f"  - {var}")
+            print("The proxy will still start, but some models may fail to load.\n")
+        else:
+            print("SUCCESS: All required environment variables are set.\n")
 
     # Command to run the proxy
     # We use --no-sync for faster startup
