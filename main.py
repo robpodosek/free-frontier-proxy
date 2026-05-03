@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
-import os
-import subprocess
-import sys
+import os, subprocess, sys, re
 from pathlib import Path
 
 def main():
-    """
-    Main entry point for the LiteLLM Proxy.
-    Validates the environment (.env file) and starts the proxy using 'uv run litellm'.
-    """
-    project_root = Path(__file__).parent
-    env_file = project_root / ".env"
+    root = Path(__file__).parent
+    env_file = root / ".env"
     
     print("\n--- LiteLLM Proxy Wrapper ---")
     
@@ -21,47 +15,25 @@ def main():
             load_dotenv(env_file)
             print(f"Loaded environment from {env_file}")
     except ImportError:
-        pass # python-dotenv not available, rely on system env
+        pass
 
     # Verify keys from config.yaml
-    config_file = project_root / "config.yaml"
-    if config_file.exists():
-        import re
-        content = config_file.read_text()
-        # Find all patterns like os.environ/KEY_NAME
-        required_vars = set(re.findall(r'os\.environ/([A-Z0-9_]+)', content))
-        
-        missing_vars = [var for var in required_vars if not os.environ.get(var)]
-        
-        if missing_vars:
+    if (cfg := root / "config.yaml").exists():
+        required = set(re.findall(r'os\.environ/([A-Z0-9_]+)', cfg.read_text()))
+        if missing := [v for v in sorted(required) if not os.environ.get(v)]:
             print("WARNING: The following environment variables are missing:")
-            for var in sorted(missing_vars):
+            for var in missing:
                 print(f"  - {var}")
             print("The proxy will still start, but some models may fail to load.\n")
         else:
             print("SUCCESS: All required environment variables are set.\n")
 
-    # Command to run the proxy
-    # We use --no-sync for faster startup
-    cmd = [
-        "uv", "run", "--no-sync", "litellm",
-        "--config", str(project_root / "config.yaml"),
-        "--port", "4000",
-        "--debug"
-    ]
-    
-    print(f"Starting LiteLLM Proxy on port 4000...")
-    print(f"Running: {' '.join(cmd)}\n")
-    
-    # Set PYTHONUNBUFFERED to ensure we see logs immediately
-    env = os.environ.copy()
-    env["PYTHONUNBUFFERED"] = "1"
+    cmd = ["uv", "run", "--no-sync", "litellm", "--config", str(cfg), "--port", "4000", "--debug"]
+    print(f"Starting LiteLLM Proxy on port 4000...\nRunning: {' '.join(cmd)}\n")
     
     try:
-        # Run the command and pipe output directly to stdout/stderr
-        subprocess.run(cmd, check=True, env=env)
+        subprocess.run(cmd, check=True, env={**os.environ, "PYTHONUNBUFFERED": "1"})
     except subprocess.CalledProcessError as e:
-        print(f"\nERROR: LiteLLM Proxy exited with code {e.returncode}")
         sys.exit(e.returncode)
     except KeyboardInterrupt:
         print("\nLiteLLM Proxy stopped by user.")
