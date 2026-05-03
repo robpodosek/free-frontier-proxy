@@ -1,9 +1,11 @@
 [project]
 name = "litellm-proxy"
 version = "0.1.0"
-description = "Add your description here"
+description = "High-availability LiteLLM Proxy optimized for free-tier frontier models with automatic fallbacks."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "litellm[proxy]>=1.83.14",
+    "litellm[proxy]>=1.52.0",
+    "google-generativeai",
+    "python-dotenv",
 ]

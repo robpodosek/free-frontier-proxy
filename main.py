@@ -21,18 +21,24 @@ def main():
         print(f"SUCCESS: Found .env file at {env_file}\n")
 
     # Command to run the proxy
+    # We use --no-sync for faster startup
     cmd = [
-        "uv", "run", "litellm",
+        "uv", "run", "--no-sync", "litellm",
         "--config", str(project_root / "config.yaml"),
-        "--port", "4000"
+        "--port", "4000",
+        "--debug"
     ]
     
     print(f"Starting LiteLLM Proxy on port 4000...")
     print(f"Running: {' '.join(cmd)}\n")
     
+    # Set PYTHONUNBUFFERED to ensure we see logs immediately
+    env = os.environ.copy()
+    env["PYTHONUNBUFFERED"] = "1"
+    
     try:
         # Run the command and pipe output directly to stdout/stderr
-        subprocess.run(cmd, check=True)
+        subprocess.run(cmd, check=True, env=env)
     except subprocess.CalledProcessError as e:
         print(f"\nERROR: LiteLLM Proxy exited with code {e.returncode}")
         sys.exit(e.returncode)
