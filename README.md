@@ -43,11 +43,29 @@ API costs can scale rapidly in AI application development. This proxy mitigates 
 
 ## Usage
 
-Start the proxy by running:
+### Local Development
+For development and local testing, run the script directly. This provides instant logs and allows you to test code changes immediately.
 
 ```bash
 uv run main.py
 ```
+
+### Production Deployment (Docker)
+For hosting on a VPS, the recommended approach is Docker. This ensures the proxy runs silently in the background and automatically restarts on server reboots.
+
+1. Ensure your API keys are available. If you use a tool like `direnv` instead of a `.env` file, the `docker-compose.yml` is configured to inherit keys from your host shell automatically.
+2. Build and start the container in detached mode:
+   ```bash
+   docker compose up -d --build
+   ```
+3. To view real-time logs:
+   ```bash
+   docker compose logs -f
+   ```
+4. To stop the container:
+   ```bash
+   docker compose down
+   ```
 
 The proxy will initialize and listen on `http://localhost:4000`.
 
