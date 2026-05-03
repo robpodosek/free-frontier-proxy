@@ -1,4 +1,4 @@
-# LiteLLM Proxy for Free-Tier Models
+# Free Frontier Proxy
 
 This project provides a robust, resilient proxy that enables free access to frontier-class AI models. 
 
@@ -22,8 +22,8 @@ API costs can scale rapidly in AI application development. This proxy mitigates 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/robpodosek/litellm-proxy.git
-   cd litellm-proxy
+   git clone https://github.com/robpodosek/free-frontier-proxy.git
+   cd free-frontier-proxy
    ```
 
 2. **Configure Environment Variables:**
