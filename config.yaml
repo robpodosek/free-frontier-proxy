@@ -27,7 +27,13 @@ model_list:
       model: nvidia_nim/deepseek-ai/deepseek-v3
       api_key: os.environ/NVIDIA_NIM_API_KEY
 
-  # Tier 3: Aggregator Free Models
+  # Tier 3: Fast/High-Volume Fallback
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  # Tier 4: Aggregator Free Models
   - model_name: openrouter-llama
     litellm_params:
       model: openrouter/meta-llama/llama-3.1-8b-instruct:free
@@ -36,12 +42,6 @@ model_list:
     litellm_params:
       model: openrouter/qwen/qwen-3.5-72b:free
       api_key: os.environ/OPENROUTER_API_KEY
-
-  # Tier 4: Fast/High-Volume Fallback
-  - model_name: gemini-flash
-    litellm_params:
-      model: gemini/gemini-1.5-flash
-      api_key: os.environ/GEMINI_API_KEY
 
   # Tier 5: Local CPU Survival
   - model_name: local-cpu-survival
