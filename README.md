@@ -32,11 +32,11 @@ API costs can scale rapidly in AI application development. This proxy mitigates 
    cp .env.example .env
    ```
    Open `.env` and configure your keys. You do not need to populate all keys to start, but configuring multiple providers increases the resilience of the proxy.
-   - Google AI Studio (Gemini)
-   - GitHub Models Marketplace (Claude, GPT-4o, Llama)
-   - Groq
-   - OpenRouter
-   - NVIDIA NIM
+   - [Google AI Studio](https://aistudio.google.com/app/apikey) (Gemini)
+   - [GitHub Models](https://github.com/settings/tokens) (Claude, GPT-4o, Llama — requires a Personal Access Token with 'Models' read access)
+   - [Groq](https://console.groq.com/keys)
+   - [OpenRouter](https://openrouter.ai/keys)
+   - [NVIDIA NIM](https://build.nvidia.com/)
 
 3. **Install Dependencies:**
    Dependencies are managed by `uv` and will be installed automatically the first time the script is executed.
