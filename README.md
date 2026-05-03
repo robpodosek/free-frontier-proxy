@@ -18,7 +18,7 @@ A simple, robust wrapper for [LiteLLM Proxy](https://github.com/BerriAI/litellm)
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/litellm-proxy.git
+   git clone https://github.com/robpodosek/litellm-proxy.git
    cd litellm-proxy
    ```
 
@@ -42,7 +42,7 @@ A simple, robust wrapper for [LiteLLM Proxy](https://github.com/BerriAI/litellm)
 Start the proxy by running:
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 The proxy will start on `http://localhost:4000`.
