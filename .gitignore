@@ -11,5 +11,11 @@ wheels/
 
 # Environment variables
 .env
+.envrc
 
+# Local state & logs
 *.log
+stats.json
+
+# Scratch & test scripts
+scratch/

@@ -2,19 +2,15 @@ model_list:
   # Tier 1: The Heavyweight Agents (Frontier Free Tiers)
   - model_name: gemini-pro
     litellm_params:
-      model: gemini/gemini-1.5-pro
+      model: gemini/gemini-pro-latest
       api_key: os.environ/GEMINI_API_KEY
-  - model_name: claude-sonnet
-    litellm_params:
-      model: github/claude-3-5-sonnet
-      api_key: os.environ/GITHUB_TOKEN
   - model_name: gpt-4o
     litellm_params:
       model: github/gpt-4o
       api_key: os.environ/GITHUB_TOKEN
   - model_name: llama-405b
     litellm_params:
-      model: github/meta-llama-3.1-405b-instruct
+      model: github/Meta-Llama-3.1-405B-Instruct
       api_key: os.environ/GITHUB_TOKEN
 
   # Tier 2: Managed OSS (High Performance)
@@ -24,31 +20,36 @@ model_list:
       api_key: os.environ/GROQ_API_KEY
   - model_name: nvidia-deepseek
     litellm_params:
-      model: nvidia_nim/deepseek-ai/deepseek-v3
+      model: nvidia_nim/deepseek-ai/deepseek-v4-flash
       api_key: os.environ/NVIDIA_NIM_API_KEY
 
   # Tier 3: Fast/High-Volume Fallback
   - model_name: gemini-flash
     litellm_params:
-      model: gemini/gemini-1.5-flash
+      model: gemini/gemini-flash-latest
       api_key: os.environ/GEMINI_API_KEY
 
   # Tier 4: Aggregator Free Models
   - model_name: openrouter-llama
     litellm_params:
-      model: openrouter/meta-llama/llama-3.1-8b-instruct:free
+      model: openrouter/meta-llama/llama-3.1-8b-instruct
       api_key: os.environ/OPENROUTER_API_KEY
   - model_name: openrouter-qwen
     litellm_params:
-      model: openrouter/qwen/qwen-3.5-72b:free
+      model: openrouter/qwen/qwen-2.5-72b-instruct
       api_key: os.environ/OPENROUTER_API_KEY
 
   # Tier 5: Local CPU Survival
   - model_name: local-cpu-survival
     litellm_params:
-      model: ollama/llama3.2:1b
+      model: ollama/phi4-mini:latest
       api_base: http://localhost:11434
 
 router_settings:
   # When the primary model (gemini-pro) hits a rate limit (429), it cascades down this list.
-  fallbacks: [{"gemini-pro": ["claude-sonnet", "gpt-4o", "llama-405b", "groq-llama-70b", "nvidia-deepseek", "gemini-flash", "openrouter-qwen", "openrouter-llama", "local-cpu-survival"]}]
+  fallbacks: [{"gemini-pro": ["gpt-4o", "groq-llama-70b", "llama-405b", "nvidia-deepseek", "gemini-flash", "openrouter-qwen", "openrouter-llama", "local-cpu-survival"]}]
+  routing_strategy: least-busy
+
+litellm_settings:
+  callbacks: ["proxy_callbacks.resilience_logger"]
+  drop_params: true
