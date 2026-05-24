@@ -1,3 +1,6 @@
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+
 model_list:
   # Tier 1: The Heavyweight Agents (Frontier Free Tiers)
   - model_name: gemini-pro
@@ -32,11 +35,11 @@ model_list:
   # Tier 4: Aggregator Free Models
   - model_name: openrouter-llama
     litellm_params:
-      model: openrouter/meta-llama/llama-3.1-8b-instruct
+      model: openrouter/meta-llama/llama-3.3-70b-instruct:free
       api_key: os.environ/OPENROUTER_API_KEY
   - model_name: openrouter-qwen
     litellm_params:
-      model: openrouter/qwen/qwen-2.5-72b-instruct
+      model: openrouter/qwen/qwen3-next-80b-a3b-instruct:free
       api_key: os.environ/OPENROUTER_API_KEY
 
   # Tier 5: Local CPU Survival

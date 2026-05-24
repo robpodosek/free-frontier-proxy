@@ -9,12 +9,10 @@ services:
       - path: .env
         required: false
     environment:
-      # These variables will be inherited directly from your direnv shell:
       - GEMINI_API_KEY
       - GITHUB_TOKEN
       - GROQ_API_KEY
       - NVIDIA_NIM_API_KEY
       - OPENROUTER_API_KEY
     volumes:
-      # Mount config.yaml so you can change fallback logic without rebuilding the image
       - ./config.yaml:/app/config.yaml:ro

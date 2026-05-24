@@ -8,10 +8,10 @@ Built on top of [LiteLLM Proxy](https://github.com/BerriAI/litellm), this reposi
 
 API costs can scale rapidly in AI application development. This proxy mitigates those costs by acting as an intelligent load balancer across established free APIs:
 
-- **Frontier Models:** Access models including `gemini-1.5-pro`, `gpt-4o`, `claude-3-5-sonnet`, and `llama-3.1-405b` at no cost using GitHub developer tokens and Google AI Studio.
-- **Graceful Fallbacks:** When a primary API key reaches its rate limit (429 error), the proxy automatically cascades the request through a prioritized list of alternatives. For example, a failed request to Gemini Pro will fallback to Claude 3.5 Sonnet, and subsequently to Groq Llama 70B.
-- **High-Performance Open Source:** Utilizes Groq and NVIDIA NIM for high-throughput inference on leading open-weight models.
-- **Ultimate Reliability:** Incorporates OpenRouter's free tier and local CPU-bound models (via `ollama`) as a final safeguard to ensure a response is always generated.
+- **Frontier Models:** Access models including `gemini-pro`, `gpt-4o`, and `llama-405b` (Llama 3.1 405B) at no cost using Google AI Studio and GitHub Models.
+- **Graceful Fallbacks:** When a primary API key reaches its rate limit (429 error), the proxy automatically cascades the request through a prioritized list of alternatives. For example, a failed request to Gemini Pro will fallback to GPT-4o, Groq Llama 70B, Llama 405B, and eventually to OpenRouter free models and local CPU backups.
+- **High-Performance Open Source:** Utilizes Groq and NVIDIA NIM for high-throughput inference on leading open-weight models (e.g. `llama-3.3-70b`, `deepseek-v4-flash`).
+- **Ultimate Reliability:** Incorporates OpenRouter's completely subsidized free endpoints (`:free` suffix) and local CPU-bound models (via `ollama`) as a final safeguard to ensure a response is always generated.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ API costs can scale rapidly in AI application development. This proxy mitigates 
    ```
    Open `.env` and configure your keys. You do not need to populate all keys to start, but configuring multiple providers increases the resilience of the proxy.
    - [Google AI Studio](https://aistudio.google.com/app/apikey) (Gemini)
-   - [GitHub Models](https://github.com/settings/tokens) (Claude, GPT-4o, Llama — requires a Personal Access Token with 'Models' read access)
+   - [GitHub Models](https://github.com/settings/tokens) (GPT-4o, Llama — requires a Personal Access Token with 'Models' read access)
    - [Groq](https://console.groq.com/keys)
    - [OpenRouter](https://openrouter.ai/keys)
    - [NVIDIA NIM](https://build.nvidia.com/)
@@ -91,6 +91,28 @@ curl --request POST \
 ## Configuration
 
 The routing logic and fallback cascades are defined in `config.yaml`. You can edit this file to add new models, change providers, or adjust the fallback priorities to suit your requirements.
+
+## Zero-Cost Safeguards
+
+To achieve the primary goal of zero-cost frontier model usage without any risk of accidental billing, the proxy uses specific safeguards for its providers:
+
+### 1. Google AI Studio (Gemini) Safeguard
+> [!IMPORTANT]
+> **Google AI Studio projects with no billing account linked will never charge you.**
+> - If you use a standard Google AI Studio developer API key *without* linking a Google Cloud Platform (GCP) billing account, you are fully secured under their generous Free Tier limits.
+> - When these rate limits are reached, Google AI Studio does **not** charge you; instead, it returns a standard `429 Resource Exhausted` error. The proxy automatically catches this error and transparently redirects your request to alternative free providers in the fallback list (such as GitHub Models or Groq).
+> - **Caution:** If you have manually linked a GCP billing account to the specific project containing your API key, Google will charge you for usage. To ensure zero cost, use a dedicated Google AI Studio project with **no billing active**.
+
+### 2. OpenRouter Safeties
+> [!TIP]
+> **Enforced Subsidized Routing via `:free` Suffix**
+> - OpenRouter model configurations in `config.yaml` explicitly append the `:free` suffix to model names (e.g., `meta-llama/llama-3.1-8b-instruct:free`).
+> - This guarantees that OpenRouter will only route requests through completely subsidized, free channels.
+> - Even if you have credit card details or a positive balance configured on your OpenRouter account, appending `:free` ensures that OpenRouter will never deduct funds for these requests.
+
+### 3. Additional Providers
+- **GitHub Models:** Fully free for prototyping. Rate limits apply, but it is impossible to be charged as there is no billing mechanism linked to developer PAT models access.
+- **Groq & NVIDIA NIM:** Free developer endpoints that are rate-limited but do not charge unless a paid plan is explicitly and manually subscribed to.
 
 ## License
 
